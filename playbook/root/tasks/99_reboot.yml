@@ -1,0 +1,13 @@
+- name: "Reboot ufw"
+  ufw:
+    state: reloaded
+
+- name: "Reboot sshd"
+  service:
+    name: sshd
+    state: restarted
+
+- name: "Reboot machine"
+  shell: reboot
+  async: 1
+  poll: 0

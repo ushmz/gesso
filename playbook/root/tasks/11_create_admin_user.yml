@@ -1,0 +1,21 @@
+- name: "Create admin user: {{ username }}"
+  user:
+    name: "{{ username }}"
+    # For simplicity.
+    # uid: "{{ uid }}"
+    # If you create additional user groups with `10_create_groups.yml`
+    # DON'T forget to add lines like following.
+    # group: common
+    # groups: admin
+    create_home: yes
+    home: "/home/{{ username }}"
+    password: "{{ password }}"
+    update_password: on_create
+    shell: /bin/bash
+
+- name: "Add user {{ username }} to sudo group"
+  shell: "usermod -aG sudo {{ username }}"
+
+- include_tasks: _ssh_config.yml
+  vars:
+    home: "/home/{{ username }}"

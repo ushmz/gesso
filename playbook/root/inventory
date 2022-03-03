@@ -1,0 +1,22 @@
+[defaults]
+pipelining=True
+allow_world_readable_tmpfiles=True
+
+[server]
+# Ip address or hostname
+192.168.56.10
+
+[server:vars]
+# ansible_python_interpreter=/usr/bin/python3
+ansible_port=22
+ansible_user=vagrant
+ansible_ssh_pass=vagrant
+new_ssh_port=55016
+
+admin_username=gessoadmin
+admin_password=aDom1n@d0m!n
+admin_ssh_pubkey=id_rsa.pub
+
+normal_username=gesso
+normal_password=geSs0ges5o
+normal_ssh_pubkey=id_rsa.pub

@@ -1,0 +1,18 @@
+# This file create some user groups
+# If you don't have to create additional groups, comment out following lines
+# or DO NOT call this file from main `playbook.yml`.
+---
+- name: "Create admin group"
+  group:
+    name: admin
+    gid: 5002
+
+- name: "create common group"
+  group:
+    name: common
+    gid: 5003
+
+- name: "allow 'sudo make' to admin"
+  lineinfile:
+    dest: /etc/sudoers
+    line: "%admin ALL=(root) /usr/bin/make"
