@@ -1,0 +1,47 @@
+- name: "Install cuda"
+  apt:
+    update_cache: yes
+    name:
+      - cuda=11.5.2-1
+      # [TODO] Specify version?
+      # - cuda-11-6
+
+- name: "Hold cuda version"
+  dpkg_selections:
+    selection: hold
+    name: cuda
+
+- name: "Set cuda path to .bashrc"
+  blockinfile:
+    # backup: yes
+    # create: yes
+    marker: ""
+    insertafter: EOF
+    path: /etc/profile
+    block: |
+      export PATH="/usr/local/cuda/bin:$PATH"
+      export LD_LIBRARY_PATH="/usr/local/cuda/lib64:$LD_LIBRARY_PATH"
+
+# - name: "Add cuDNN repository source"
+#   shell: |
+#     echo "deb https://developer.download.nvidia.com/compute/machine-learning/repos/ubuntu2004/x86_64/" | sudo tee -a /etc/apt/sources.list.d/nvidia-ml.list
+
+- name: "Add cuDNN repository source"
+  apt_repository:
+    update_cache: no
+    # repo: deb https://developer.download.nvidia.com/compute/cuda/repos/{{ ansible_distribution | lower }}{{ ansible_distribution_version | regex_replace('\.', '')}}/{{ ansible_architecture }} /
+    repo: deb https://developer.download.nvidia.com/compute/machine-learning/repos/{{ ansible_distribution | lower }}{{ ansible_distribution_version | regex_replace('\.', '')}}/{{ ansible_architecture }} /
+    state: present
+    filename: nvidia-ml
+
+- name: "Install cuDNN"
+  # become: yes
+  apt:
+    update_cache: yes
+    name:
+      - libcudnn8-dev=8.3.2.44-1+cuda11.5
+
+- name: "Hold cuDNN version"
+  dpkg_selections:
+    selection: hold
+    name: libcudnn8-dev

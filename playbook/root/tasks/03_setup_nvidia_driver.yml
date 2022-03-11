@@ -1,0 +1,24 @@
+- name: "Add nvidia-driver registory key"
+  apt_key:
+    url: http://developer.download.nvidia.com/compute/cuda/repos/{{ ansible_distribution | lower }}{{ ansible_distribution_version | regex_replace('\.', '')}}/{{ ansible_architecture }}/7fa2af80.pub
+    state: present
+
+- name: "Add nvidia-driver repository source"
+  apt_repository:
+    update_cache: no
+    repo: deb https://developer.download.nvidia.com/compute/cuda/repos/{{ ansible_distribution | lower }}{{ ansible_distribution_version | regex_replace('\.', '')}}/{{ ansible_architecture }} /
+    state: present
+    filename: nvidia-cuda
+
+- name: "Install nvidia-driver"
+  apt:
+    update_cache: yes
+    state: present
+    name:
+      - nvidia-driver-430
+#
+# - name: "Hold nvidia-driver version"
+#   dpkg_selections:
+#     selection: hold
+#     name:
+#       - nvidia-driver-430
