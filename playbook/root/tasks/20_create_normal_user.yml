@@ -16,3 +16,8 @@
 - include_tasks: _ssh_config.yml
   vars:
     home: "/home/{{ username }}"
+
+- name: "Docker rootless mode setup for user {{ username }}"
+  become: yes
+  become_user: "{{ username }}"
+  shell: "dockerd-rootless-setuptool.sh install"

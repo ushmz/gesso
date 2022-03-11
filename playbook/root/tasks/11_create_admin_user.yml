@@ -16,6 +16,77 @@
 - name: "Add user {{ username }} to sudo group"
   shell: "usermod -aG sudo {{ username }}"
 
+# - name: "Add user {{ username }} to docker group"
+#   shell: "usermod -aG docker {{ username }}"
+
 - include_tasks: _ssh_config.yml
   vars:
     home: "/home/{{ username }}"
+
+- name: "Docker rootless mode setup for user {{ username }}"
+  become: yes
+  become_user: "{{ username }}"
+  shell: "dockerd-rootless-setuptool.sh install"
+
+# - name: "Find uid of user"
+#   # become: yes
+#   become_user: "{{ username }}"
+#   command: "id -u {{ username }}"
+#   register: uid
+#   check_mode: no
+#   changed_when: false
+
+# - name: "Determine XDG_RUNTIME_DIR"
+#   set_fact:
+#     xdg_runtime_dir: "/run/user/{{ uid.stdout }}"
+#   changed_when: false
+
+# - name: "Check if user is lingering"
+#   stat:
+#     path: "/var/lib/systemd/linger/{{ username }}"
+#   register: user_lingering
+#   when: username != "root"
+
+# - name: "Enable lingering is needed"
+#   command: "loginctl enable-linger {{ username }}"
+#   when:
+#     - username != "root"
+#     - not user_lingering.stat.exists
+
+- name: create "{{ username }}" docker bin dir
+  become: "yes"
+  become_user: "{{ username }}"
+  ansible.builtin.file:
+    path: "/home/{{ username }}/bin"
+    state: directory
+    mode: "0700"
+
+- name: create "{{ username }}" systemd config dir
+  become: "yes"
+  become_user: "{{ username }}"
+  ansible.builtin.file:
+    path: "/home/{{ username }}/.config/systemd/user"
+    state: directory
+    mode: "0700"
+  tags:
+    - docker
+
+# - name: add docker systemd service
+#   become: "yes"
+#   become_user: "{{ username }}"
+#   ansible.builtin.template:
+#     src: docker_rootless.service.j2
+#     dest: "/home/{{ username }}/.config/systemd/user/docker.service"
+#     backup: "yes"
+#     mode: 0600
+
+- name: "Enable user-scope docker.service"
+  # environment:
+  #   XDG_RUNTIME_DIR: "{{ xdg_runtime_dir }}"
+  become: yes
+  become_user: "{{ username }}"
+  systemd:
+    name: docker
+    enabled: yes
+    scope: user
+    state: started

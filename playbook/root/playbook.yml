@@ -6,17 +6,18 @@
     - include_tasks: tasks/02_setup_global_pyenv.yml
       vars:
         python_version: "3.10.0"
+    - include_tasks: tasks/03_setup_nvidia_driver.yml
+    - include_tasks: tasks/04_setup_cuda.yml
+    - include_tasks: tasks/05_setup_docker_rootless.yml
     # - include_tasks: tasks/10_create_groups.yml
     - include_tasks: tasks/11_create_admin_user.yml
       vars:
         username: "{{ admin_username }}"
-        uid: 1001
         password: "{{ admin_password | password_hash('sha512') }}"
         ssh_pubkey: "{{ admin_ssh_pubkey }}"
     - include_tasks: tasks/20_create_normal_user.yml
       vars:
         username: "{{ normal_username }}"
-        uid: 2001
         password: "{{ normal_password | password_hash('sha512') }}"
         ssh_pubkey: "{{ normal_ssh_pubkey }}"
 
