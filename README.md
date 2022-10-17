@@ -1,6 +1,6 @@
 # gesso
 
-研究室で用いるサーバーのセットアップを自動化する ansible playbook です．
+計算リソースとしての linux サーバーセットアップの自動化に使えそうな ansible playbook です．
 
 ## 動作確認済み OS
 
